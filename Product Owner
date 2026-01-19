@@ -284,4 +284,21 @@ HubSpot → /hubspot/callback
 Controller → HubspotService
 Service → OAuth / Refresh / Tokens
 DB → hubspot_tokens
+
+Visão de produto
+
+Vendável como:
+
+Módulo de integração
+
+Feature premium
+
+Base de um SaaS B2B
+
+Layout aprovado
+
+Funcionalidade estável
+
+MVP fechado
+
 ================================================================
