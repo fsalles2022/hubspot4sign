@@ -20,3 +20,4 @@ Route::get('/hubspot/status', [HubspotController::class, 'status']);
 Route::post('/hubspot/disconnect', [HubspotController::class, 'disconnect']);
 
 
+
