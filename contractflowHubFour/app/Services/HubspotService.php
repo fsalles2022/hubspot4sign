@@ -50,12 +50,18 @@ class HubspotService
      |  TOKEN
      ========================== */
 
+    // public function hasValidToken(): bool
+    // {
+    //     $token = HubspotToken::first();
+
+    //     return $token && Carbon::parse($token->expires_at)->isFuture();
+    // }
+
     public function hasValidToken(): bool
     {
-        $token = HubspotToken::first();
-
-        return $token && Carbon::parse($token->expires_at)->isFuture();
+        return HubspotToken::query()->whereNotNull('access_token')->exists();
     }
+
 
     public function getValidToken(): string
     {
@@ -167,6 +173,13 @@ class HubspotService
             ]
         ];
     }
+
+    public function getPortalId(): ?int
+    {
+        $overview = $this->getAccountOverview();
+        return $overview['portal_id'] ?? null;
+    }
+
 
 
 

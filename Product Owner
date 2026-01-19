@@ -285,3 +285,83 @@ Controller → HubspotService
 Service → OAuth / Refresh / Tokens
 DB → hubspot_tokens
 ================================================================
+
+Feature/hubspot-v2
+
+Histórico real (DB)
+
+Webhooks
+
+Multi-tenant
+
+Métricas avançadas
+
+Performance / cache
+
+UX refinado
+
+Layout aprovado
+
+✔️ Integração HubSpot funcional
+
+✔️ Branch nova criada
+
+:
+
+📐 Model + migration
+
+🧠 Service de snapshot
+
+⏰ Schedule no Laravel
+
+📊 Endpoint pronto pro chart
+
+1 - O objetivo do A é:
+👉 transformar seu dashboard em analytics real, com histórico salvo no banco e gráficos baseados em dados reais (não mock).
+
+Resultado final:
+
+Seu sistema salva diariamente (ou sob demanda):
+
+total de contatos
+
+total de empresas
+
+total de negócios
+
+Esses dados ficam no banco
+
+O gráfico passa a mostrar evolução real no tempo
+
+Base pronta para:
+
+métricas
+
+relatórios
+
+SaaS no futuro
+=====================================================================
+
+🔹 Backend
+
+✔️ OAuth com HubSpot está válido
+
+✔️ HubspotService::getAccountOverview() funciona
+
+✔️ HubspotSnapshotService::createFromOverview() está correto
+
+✔️ Migration da tabela hubspot_snapshots está alinhada
+
+✔️ Command no Laravel 11 está bem injetado
+
+✔️ Persistência no banco OK
+
+🔹 Arquitetura
+
+✔️ Command → Service → Model (fluxo limpo)
+
+✔️ Nada acoplado à Controller
+
+✔️ Código pronto para Scheduler / Cron
+
+✔️ Escalável para múltiplas contas futuramente
