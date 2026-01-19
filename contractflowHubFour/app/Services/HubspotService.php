@@ -122,14 +122,14 @@ class HubspotService
             'account_name' => $data['companyName'] ?? null,
         ];
     }
-
     private function countObjects(string $type): int
     {
-        $response = $this->client->get("crm/v3/objects/{$type}", [
+        $response = $this->client->post("crm/v3/objects/{$type}/search", [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->getValidToken(),
+                'Content-Type'  => 'application/json',
             ],
-            'query' => [
+            'json' => [
                 'limit' => 1
             ]
         ]);
@@ -138,6 +138,7 @@ class HubspotService
 
         return $data['total'] ?? 0;
     }
+
 
     public function getAccountOverview(): ?array
     {

@@ -7,22 +7,22 @@
     "distribution": "private",
     "auth": {
       "type": "oauth",
-      "redirectUrls": [
-        "http://localhost:8000/api/hubspot/callback"
-      ],
+      "redirectUrls": ["http://localhost:8000/api/hubspot/callback"],
       "requiredScopes": [
         "crm.objects.contacts.read",
         "crm.objects.contacts.write",
+        "crm.objects.companies.read",
+        "crm.objects.companies.write",
         "crm.objects.deals.read",
-        "crm.objects.deals.write"
+        "crm.objects.deals.write",
+        "oauth"
       ],
+
       "optionalScopes": [],
       "conditionallyRequiredScopes": []
     },
     "permittedUrls": {
-      "fetch": [
-        "https://api.hubapi.com"
-      ],
+      "fetch": ["https://api.hubapi.com"],
       "iframe": [],
       "img": []
     },

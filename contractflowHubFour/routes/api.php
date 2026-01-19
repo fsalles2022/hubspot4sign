@@ -15,6 +15,8 @@ Route::post('/hubspot/import', [HubspotController::class, 'importContacts']);
 Route::post('/hubspot/contact', [HubspotController::class, 'createContact']);
 Route::post('/hubspot/deal', [HubspotController::class, 'createDeal']);
 Route::get('/hubspot/status', [HubspotController::class, 'status']);
+Route::get('/hubspot/overview', [HubspotController::class, 'overview']);
+
 
 
 Route::post('/hubspot/disconnect', [HubspotController::class, 'disconnect']);
