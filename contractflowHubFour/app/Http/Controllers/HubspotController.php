@@ -76,6 +76,14 @@ class HubspotController extends Controller
         return response()->json(['imported' => count($contacts)]);
     }
 
+    public function overview()
+    {
+        return response()->json(
+            $this->hubspot->getAccountOverview()
+        );
+    }
+
+
     // 🔌 Disconnect
     public function disconnect()
     {

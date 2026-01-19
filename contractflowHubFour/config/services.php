@@ -36,7 +36,7 @@ return [
     ],
 
     'hubspot' => [
-        'token' => env('HUBSPOT_TOKEN'),
+        // 'token' => env('HUBSPOT_TOKEN'),
         'client_id'     => env('HUBSPOT_CLIENT_ID'),
         'client_secret' => env('HUBSPOT_CLIENT_SECRET'),
         'redirect'      => env('HUBSPOT_REDIRECT_URI'),

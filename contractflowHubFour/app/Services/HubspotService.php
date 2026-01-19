@@ -76,7 +76,7 @@ class HubspotService
                 'grant_type'    => 'refresh_token',
                 'client_id'     => config('services.hubspot.client_id'),
                 'client_secret' => config('services.hubspot.client_secret'),
-                'refresh_token'=> $token->refresh_token,
+                'refresh_token' => $token->refresh_token,
             ]
         ]);
 
@@ -122,6 +122,52 @@ class HubspotService
             'account_name' => $data['companyName'] ?? null,
         ];
     }
+
+    private function countObjects(string $type): int
+    {
+        $response = $this->client->get("crm/v3/objects/{$type}", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->getValidToken(),
+            ],
+            'query' => [
+                'limit' => 1
+            ]
+        ]);
+
+        $data = json_decode($response->getBody(), true);
+
+        return $data['total'] ?? 0;
+    }
+
+    public function getAccountOverview(): ?array
+    {
+        if (!$this->hasValidToken()) {
+            return null;
+        }
+
+        $response = $this->client->get('account-info/v3/details', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->getValidToken(),
+            ]
+        ]);
+
+        $data = json_decode($response->getBody(), true);
+
+        return [
+            'portal_id' => $data['portalId'] ?? null,
+            'company_name' => $data['companyName'] ?? null,
+            'timezone' => $data['timeZone'] ?? null,
+            'region' => $data['dataRegion'] ?? null,
+
+            'objects' => [
+                'contacts'  => $this->countObjects('contacts'),
+                'companies' => $this->countObjects('companies'),
+                'deals'     => $this->countObjects('deals'),
+            ]
+        ];
+    }
+
+
 
     /* ==========================
      |  DISCONNECT

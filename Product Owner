@@ -131,4 +131,157 @@ Isso já coloca o projeto acima da média.
 ################################################
 
 
-Sprint (Sprint 2
+Sprint (Sprint 2)
+
+OPÇÃO A APROVADA
+
+(Valor imediato + cara de produto profissional)
+
+Vou agir 100% como seu PO + Tech Lead agora.
+
+🎯 Objetivo da Fase 2 (Opção A)
+
+Deixar a integração confiável, transparente e profissional para o usuário.
+
+O usuário deve:
+
+Saber qual conta HubSpot está conectada
+
+Entender se está tudo ok com o token
+
+Confiar que a integração está “viva”
+
+🧱 Entregáveis desta fase
+1️⃣ Endpoint de informações da conta HubSpot
+📌 O que vamos buscar
+
+Da API oficial do HubSpot (Settings):
+
+Portal ID ✅ (já temos)
+
+Moeda da conta
+
+Timezone (quando disponível)
+
+👉 Isso é informação de conta, não CRM.
+
+🔧 HubspotService — novo método
+public function getAccountInfo(): array
+{
+    $token = $this->getValidAccessToken();
+
+    $response = $this->client->get(
+        'https://api.hubapi.com/settings/v3/currencies/company-currency',
+        [
+            'headers' => [
+                'Authorization' => "Bearer {$token}",
+                'Accept' => 'application/json',
+            ]
+        ]
+    );
+
+    return json_decode($response->getBody(), true);
+}
+
+
+📌 Aqui usamos Bearer Token corretamente, por isso não terá mais:
+
+Authentication credentials not found
+
+2️⃣ Endpoint /hubspot/status mais inteligente
+Antes
+{ "connected": true }
+
+Agora (novo padrão)
+{
+  "connected": true,
+  "portal_id": 50923702,
+  "currency": "BRL",
+  "expires_in": 3120
+}
+
+🔧 Controller (HubspotController.php)
+public function status()
+{
+    if (!$this->hubspot->hasValidToken()) {
+        return response()->json([
+            'connected' => false
+        ]);
+    }
+
+    return response()->json([
+        'connected' => true,
+        'portal_id' => $this->hubspot->getPortalId(),
+        'currency' => $this->hubspot->getCompanyCurrency()['code'] ?? 'N/A',
+        'expires_in' => $this->hubspot->expiresIn()
+    ]);
+}
+
+3️⃣ Ajuste no Frontend (Vue)
+📌 Estado agora é real, não fixo
+const account = ref(null)
+
+onMounted(async () => {
+  const { data } = await api.get('/hubspot/status')
+
+  connected.value = data.connected
+
+  if (data.connected) {
+    account.value = {
+      portal_id: data.portal_id,
+      currency: data.currency,
+      expires_in: data.expires_in
+    }
+  }
+
+  loading.value = false
+})
+
+🎨 UI profissional
+<div v-if="account" class="account-box">
+  <strong>Conta conectada</strong>
+  <p class="account-name">HubSpot Portal</p>
+  <small>Portal ID: {{ account.portal_id }}</small><br>
+  <small>Moeda: {{ account.currency }}</small>
+</div>
+
+
+📌 Não mostramos nome fake
+📌 Só dados oficiais da API
+
+4️⃣ UX: status do token
+Badge dinâmica
+<div class="badge success">
+  ✅ Conectado (expira em {{ Math.floor(account.expires_in / 60) }} min)
+</div>
+
+
+Isso é nível SaaS real.
+
+5️⃣ Resultado final desta fase
+
+Você terá:
+
+Integração clara
+
+Dados reais da conta
+
+UX confiável
+
+Base pronta para:
+
+multi-conta
+
+billing
+
+logs
+
+SaaS
+
+👉 Isso já pode ser vendido como MVP
+Vue → /hubspot/redirect
+HubSpot → /hubspot/callback
+Controller → HubspotService
+Service → OAuth / Refresh / Tokens
+DB → hubspot_tokens
+================================================================
