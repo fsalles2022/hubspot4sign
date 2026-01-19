@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, render } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import api from '../services/api'
 
@@ -79,7 +79,6 @@ const loadOverview = async () => {
     animateNumber(animatedDeals, data.objects.deals)
     await nextTick()
     renderMetricsChart()
-    renderHistoryChart()
   } catch {
     error.value = 'Não foi possível carregar os dados da conta'
   } finally { loadingOverview.value = false }
@@ -180,7 +179,14 @@ onMounted(async () => {
     const { data } = await api.get('/hubspot/status')
     connected.value = data.connected
     account.value = data.account ?? null
-    if (connected.value) await loadOverview()
+
+    if (connected.value)
+      await loadOverview();
+    await loadHistory();
+    await nextTick();
+    console.log('History:', history.value)
+
+    renderHistoryChart()
   } catch {
     error.value = 'Não foi possível verificar o status do HubSpot'
   } finally { loading.value = false }

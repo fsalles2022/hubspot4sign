@@ -36,9 +36,15 @@ class HubspotSnapshotService
 
     public function getHistory(int $portalId, int $days = 30)
     {
-        return HubspotSnapshot::where('portal_id', $portalId)
+        return HubspotSnapshot::query()
+            ->where('portal_id', $portalId)
+            ->where('snapshot_date', '>=', now()->subDays($days))
             ->orderBy('snapshot_date')
-            ->take($days)
-            ->get();
+            ->get([
+                'snapshot_date',
+                'contacts',
+                'companies',
+                'deals'
+            ]);
     }
 }

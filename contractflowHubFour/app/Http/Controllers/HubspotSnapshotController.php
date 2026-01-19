@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\HubspotService;
 use App\Services\HubspotSnapshotService;
+use App\Models\HubspotSnapshot;
 use Illuminate\Pipeline\Hub;
 
 class HubspotSnapshotController extends Controller
@@ -49,24 +50,35 @@ class HubspotSnapshotController extends Controller
     }
 
 
-    public function history(HubspotSnapshotService $snapshotService)
+    public function history(HubspotSnapshotService $service)
     {
-        $overview = $this->hubspotService->getAccountOverview();
-        $portalId = $overview['portal_id'] ?? null;
+        $portalId = $this->hubspotService->getAccountOverview()['portal_id'];
 
-        if (!$portalId) {
-            return response()->json(['error' => 'Portal ID not found'], 404);
-        }
-
-        $history = $snapshotService->getHistory($portalId, 30);
-
-        return response()->json($history);
-    }
-
-    public function overview()
-    {
         return response()->json(
-            $this->hubspotService->getAccountOverview()
+            $service->getHistory($portalId)
         );
     }
-}
+
+
+    public function overview(){
+   $snapshot = HubspotSnapshot::latest('snapshot_date')->first();
+
+    if (!$snapshot) {
+        return response()->json([
+            'message' => 'Nenhum snapshot disponível'
+        ], 404);
+    }
+
+    return response()->json([
+        'portal_id' => $snapshot->portal_id,
+        'company_name' => $snapshot->company_name,
+        'region' => $snapshot->region,
+        'timezone' => $snapshot->timezone,
+        'objects' => [
+            'contacts' => $snapshot->contacts,
+            'companies' => $snapshot->companies,
+            'deals' => $snapshot->deals,
+        ]
+    ]);
+}}
+
