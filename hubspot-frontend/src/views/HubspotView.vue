@@ -226,7 +226,7 @@ onMounted(async () => {
         </div>
 
         <div v-else>
-          <div class="badge success">✅ HubSpot conectado</div>
+          <div class="badge success" style="color:brown;">✅ HubSpot conectado</div>
 
           <!-- Conta -->
           <div class="account-box">
