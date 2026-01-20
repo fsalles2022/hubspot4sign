@@ -11,27 +11,27 @@ class HubspotSnapshotService
         protected HubspotService $hubspotService
     ) {}
 
-    public function createFromOverview(?array $overview)
+    public function createFromOverview(array $overview)
     {
-        if (!$overview) {
-            return null;
-        }
-
-        return HubspotSnapshot::updateOrCreate(
+        // Atualiza ou cria um snapshot único por portal_id + snapshot_date
+        $snapshot = HubspotSnapshot::updateOrCreate(
             [
-                'portal_id' => $overview['portal_id'],
-                'snapshot_date' => now()->toDateString(),
+                'portal_id'     => $overview['portal_id'],
+                'snapshot_date' => now()->toDateString(), // Garante 1 snapshot por dia
             ],
             [
-                'company_name' => $overview['company_name'] ?? null,
-                'region' => $overview['region'] ?? null,
-                'timezone' => $overview['timezone'] ?? null,
-                'contacts' => $overview['objects']['contacts'] ?? 0,
-                'companies' => $overview['objects']['companies'] ?? 0,
-                'deals' => $overview['objects']['deals'] ?? 0,
+                'company_name' => $overview['company_name'],
+                'region'       => $overview['region'],
+                'timezone'     => $overview['timezone'],
+                'contacts'     => $overview['objects']['contacts'] ?? 0,
+                'companies'    => $overview['objects']['companies'] ?? 0,
+                'deals'        => $overview['objects']['deals'] ?? 0,
             ]
         );
+
+        return $snapshot;
     }
+
 
 
     public function getHistory(int $portalId, int $days = 30)
