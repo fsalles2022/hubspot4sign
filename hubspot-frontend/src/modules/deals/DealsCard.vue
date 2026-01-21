@@ -11,11 +11,7 @@ defineProps({
 
 <template>
   <div class="deals-cards">
-    <div
-      v-for="deal in deals"
-      :key="deal.id"
-      class="deal-card"
-    >
+    <div v-for="deal in deals" :key="deal.id" class="deal-card">
       <div class="card-header">
         <h3>{{ deal.title }}</h3>
         <DealStatusBadge :status="deal.status" />
@@ -43,7 +39,7 @@ defineProps({
   background: #ffffff;
   border-radius: 14px;
   padding: 20px;
-  box-shadow: 0 10px 20px rgba(0,0,0,.08);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, .08);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -64,5 +60,9 @@ defineProps({
 .client {
   font-size: 14px;
   color: #475569;
+}
+
+.deals-cards {
+  color: #1e3a8a;
 }
 </style>

@@ -1,12 +1,17 @@
 <script setup>
+import { computed } from 'vue'
 import DealStatusBadge from '@/components/deals/DealStatusBadge.vue'
 
-defineProps({
+const props = defineProps({
   deals: {
     type: Array,
     required: true
   }
 })
+
+const totalValue = computed(() =>
+  props.deals.reduce((total, deal) => total + Number(deal.value || 0), 0)
+)
 </script>
 
 <template>
@@ -34,6 +39,14 @@ defineProps({
             {{ new Date(deal.created_at).toLocaleDateString('pt-BR') }}
           </td>
         </tr>
+
+        <!-- Linha TOTAL -->
+        <tr class="total-row">
+          <td colspan="2"><strong>TOTAL</strong></td>
+          <td colspan="3">
+            <strong>R$ {{ totalValue.toLocaleString('pt-BR') }}</strong>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -45,10 +58,9 @@ defineProps({
   overflow-x: auto;
   background: #ffffff;
   border-radius: 14px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, .08);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
   padding-bottom: 16px;
   margin-bottom: 20px;
-
 }
 
 table {
@@ -71,5 +83,14 @@ th {
 
 tr:not(:last-child) td {
   border-bottom: 1px solid #e2e8f0;
+}
+
+/* TOTAL */
+.total-row {
+  background-color: #e0f2fe;
+}
+
+.total-row td {
+  font-size: 15px;
 }
 </style>
