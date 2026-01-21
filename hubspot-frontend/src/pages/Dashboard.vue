@@ -6,7 +6,11 @@ import HubspotStatus from '../modules/hubspot/HubspotStatus.vue'
 import HubspotMetrics from '../modules/hubspot/HubspotMetrics.vue'
 import HubspotCharts from '../modules/hubspot/HubspotCharts.vue'
 
-// ===== STATE (OBRIGATÓRIO) =====
+
+import DealsCards from '../modules/deals/DealsCard.vue'
+import DealsTable from '../modules/deals/DealsTable.vue'
+
+// ===== STATE =====
 const loading = ref(true)
 const importing = ref(false)
 const connected = ref(false)
@@ -16,13 +20,15 @@ const account = ref(null)
 const overview = ref(null)
 const history = ref([])
 
+const deals = ref([])
+
 const animatedContacts = ref(0)
 const animatedCompanies = ref(0)
 const animatedDeals = ref(0)
 
 const platformName = ref('DevNest HubSpot Account')
 
-// ===== ACTIONS =====
+// ===== HUBSPOT ACTIONS =====
 const connect = () => {
   window.location.href = 'http://localhost:8000/api/hubspot/redirect'
 }
@@ -60,6 +66,11 @@ const loadHistory = async () => {
   history.value = data
 }
 
+const loadDeals = async () => {
+  const { data } = await api.get('/deals')
+  deals.value = data.data // paginator
+}
+
 // ===== INIT =====
 onMounted(async () => {
   try {
@@ -71,6 +82,8 @@ onMounted(async () => {
       await loadOverview()
       await loadHistory()
     }
+
+    await loadDeals()
   } catch {
     error.value = 'Erro ao verificar HubSpot'
   } finally {
@@ -79,8 +92,8 @@ onMounted(async () => {
 })
 </script>
 
-
 <template>
+  <!-- HUBSPOT -->
   <HubspotStatus
     :loading="loading"
     :error="error"
@@ -106,4 +119,15 @@ onMounted(async () => {
     :overview="overview"
     :history="history"
   />
+
+  <!-- DEALS -->
+  <section v-if="deals.length" style="margin-top: 32px;">
+    <h2 style="margin-bottom: 16px;">💼 Negócios</h2>
+
+    <DealsCards :deals="deals" />
+
+    <div style="margin-top: 24px;">
+      <DealsTable :deals="deals" />
+    </div>
+  </section>
 </template>
