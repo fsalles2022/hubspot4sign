@@ -12,8 +12,10 @@ class CompanyController extends Controller
     {
         return Company::with(['clients', 'deals'])
             ->when($request->search, function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->search}%")
-                  ->orWhere('email', 'like', "%{$request->search}%");
+                $q->where(function ($query) use ($request) {
+                    $query->where('name', 'like', "%{$request->search}%")
+                          ->orWhere('hubspot_id', 'like', "%{$request->search}%");
+                });
             })
             ->orderBy('name')
             ->paginate(10);
@@ -22,9 +24,8 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string',
-            'email' => 'nullable|email',
-            'hubspot_id' => 'nullable|string',
+            'name' => 'required|string|max:255',
+            'hubspot_id' => 'nullable|string|max:255',
         ]);
 
         return Company::create($data);
@@ -38,8 +39,8 @@ class CompanyController extends Controller
     public function update(Request $request, Company $company)
     {
         $data = $request->validate([
-            'name' => 'required|string',
-            'email' => 'nullable|email',
+            'name' => 'required|string|max:255',
+            'hubspot_id' => 'nullable|string|max:255',
         ]);
 
         $company->update($data);
@@ -51,6 +52,8 @@ class CompanyController extends Controller
     {
         $company->delete();
 
-        return response()->json(['message' => 'Empresa removida com sucesso']);
+        return response()->json([
+            'message' => 'Empresa removida com sucesso'
+        ]);
     }
 }

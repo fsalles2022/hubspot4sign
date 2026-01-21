@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Company;
-use App\Models\HubspotSnapshot;
+use App\Models\Deal;
 
 class Client extends Model 
 {
@@ -17,11 +17,11 @@ class Client extends Model
 
     public function company()
     {
-        return $this->belongsTo( Company::class );
+        return $this->belongsTo(Company::class);
     }
 
     public function deals()
     {
-        return $this->hasMany(HubspotSnapshot::class, 'portal_id', 'hubspot_id');
+        return $this->hasMany(Deal::class);
     }
 }

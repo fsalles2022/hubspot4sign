@@ -3,57 +3,61 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Client;
+use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-
         return Client::with('company')
-            ->when(
-                $request->search,
-                fn($q) =>
-                $q->where('name', 'like', "%{$request->search}%")
-                    ->orWhere('email', 'like', "%{$request->search}%")
-            )
+            ->when($request->search, function ($q) use ($request) {
+                $q->where(function ($query) use ($request) {
+                    $query->where('name', 'like', "%{$request->search}%")
+                          ->orWhere('email', 'like', "%{$request->search}%");
+                });
+            })
+            ->orderBy('name')
             ->paginate(10);
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        return Client::create($request->all());
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:clients,email',
+            'hubspot_id' => 'nullable|string',
+            'company_id' => 'nullable|exists:companies,id',
+        ]);
+
+        return Client::create($data);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Client $client)
     {
-        //
+        return $client->load(['company', 'deals']);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Client $client)
     {
-        //
+        $data = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => "sometimes|required|email|unique:clients,email,{$client->id}",
+            'hubspot_id' => 'nullable|string',
+            'company_id' => 'nullable|exists:companies,id',
+        ]);
+
+        $client->update($data);
+
+        return $client->refresh();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Client $client)
     {
-        //
+        $client->delete();
+
+        return response()->json([
+            'message' => 'Cliente removido com sucesso'
+        ]);
     }
 }

@@ -8,7 +8,10 @@ use App\Models\Deal;
 
 class Company extends Model
 {
-    protected $fillable = ['name', 'email', 'hubspot_id'];
+    protected $fillable = [
+        'name',
+        'hubspot_id'
+    ];
 
     public function clients()
     {
@@ -20,3 +23,4 @@ class Company extends Model
         return $this->hasMany(Deal::class);
     }
 }
+
